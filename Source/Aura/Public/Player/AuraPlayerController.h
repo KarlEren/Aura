@@ -5,10 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "EnhancedInputSubsystems.h"
+
 #include "AuraPlayerController.generated.h"
 
 
 class UInputMappingContext;//为了使用增强输入，必须显式声明，同时在.build.cs中添加“EnhancedInput”
+class UInputAction;
+
 
 UCLASS()
 class AURA_API AAuraPlayerController : public APlayerController
@@ -18,6 +21,13 @@ public:
 	AAuraPlayerController();
 protected:
 	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
 private:
+	UPROPERTY(EditAnywhere,Category="Input")
 	TObjectPtr<UInputMappingContext>AuraContext;
+	UPROPERTY(EditAnywhere,Category="Input")
+	TObjectPtr<UInputAction>MoveAction;
+
+
+	void Move(const FInputActionValue&InputActionValue);
 };
