@@ -11,7 +11,10 @@ AAuraPlayerState::AAuraPlayerState()
 	NetUpdateFrequency=100;//服务器更新客户端的频率
 	AbilitySystemComponent=CreateDefaultSubobject<UAuraAbilitySystemComponent>("AbilitySystemComponent");//赋值
 	AbilitySystemComponent->SetIsReplicated(true);//设置可被服务器赋值
-	AttributeSet=CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");	
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);//设置复制模式为Mixed
+	AttributeSet=CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
+	
+	
 }
 
 UAbilitySystemComponent* AAuraPlayerState::GetAbilitySystemComponent() const

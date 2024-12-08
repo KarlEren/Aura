@@ -12,7 +12,9 @@ AAuraEnemy::AAuraEnemy()
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility,ECR_Block);
 	AbilitySystemComponent=CreateDefaultSubobject<UAuraAbilitySystemComponent>("AbilitySystemComponent");//赋值
 	AbilitySystemComponent->SetIsReplicated(true);//设置可被服务器赋值
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);//设置复制模式为Minimal
 	AttributeSet=CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
+	
 	
 }
 
