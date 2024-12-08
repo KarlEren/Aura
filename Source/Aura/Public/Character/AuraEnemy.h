@@ -7,6 +7,11 @@
 #include "Interaction/EnemyInterface.h"
 #include "AuraEnemy.generated.h"
 
+
+class UAbilitySystemComponent;
+class UAttributeSet;
+
+
 /**
  * 
  */
