@@ -23,5 +23,6 @@ public:
 	AAuraEnemy();
 	virtual void HighLightActor() override;
 	virtual void UnHightLightActor() override;
-
+protected:
+	virtual void BeginPlay() override;
 };
