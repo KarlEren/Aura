@@ -6,6 +6,15 @@
 #include "GameFramework/Actor.h"
 #include "AuraEffectActor.generated.h"
 
+
+UENUM(BlueprintType)
+enum class EAuraEffectType : uint8
+{
+	Health=0,
+	Mana,
+};
+
+
 class USphereComponent;
 
 UCLASS()
@@ -22,6 +31,9 @@ public:
 
 	UFUNCTION()
 	virtual void EndOverlap(UPrimitiveComponent* OverlappedComponent,AActor* OtherActor,UPrimitiveComponent* OtherComp,int32 OtherBodyIndex);
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	EAuraEffectType AuraEffectType;
 	
 protected:
 	// Called when the game starts or when spawned

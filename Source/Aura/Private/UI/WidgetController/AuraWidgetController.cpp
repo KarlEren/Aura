@@ -10,3 +10,13 @@ void UAuraWidgetController::SetWidgetControllerParams(const FAuraWidgetControlle
 	AbilitySystemComponent = Params.AbilitySystemComponent;
 	AttributeSet = Params.AttributeSet;
 }
+
+void UAuraWidgetController::BoardcastInitValues()
+{
+	
+}
+
+void UAuraWidgetController::BindValueChangeDelegates()
+{
+	
+}

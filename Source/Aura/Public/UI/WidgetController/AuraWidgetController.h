@@ -46,6 +46,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FAuraWidgetControllerParams& Params);
+
+	virtual void BoardcastInitValues();
+
+	virtual void BindValueChangeDelegates();
 	
 protected:
 

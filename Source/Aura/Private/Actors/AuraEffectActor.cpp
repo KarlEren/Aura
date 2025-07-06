@@ -27,7 +27,15 @@ void AAuraEffectActor::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 			if (const UAuraAttributeSet *AuraAttributeSet = Cast<UAuraAttributeSet>(AuraAbilityComp->GetAttributeSet(UAuraAttributeSet::StaticClass())))
 			{
 				UAuraAttributeSet *NonConstAuraAttributeSet = const_cast<UAuraAttributeSet *>(AuraAttributeSet);
-				NonConstAuraAttributeSet->SetHealth(NonConstAuraAttributeSet->GetHealth()+500.f);
+				switch (AuraEffectType)
+				{
+				case EAuraEffectType::Health:
+					NonConstAuraAttributeSet->SetHealth(NonConstAuraAttributeSet->GetHealth()-40.f);
+					break;
+				case EAuraEffectType::Mana:
+					NonConstAuraAttributeSet->SetMana(NonConstAuraAttributeSet->GetMana()-40.f);
+					break;
+				}
 				Destroy();
 			}
 		}
