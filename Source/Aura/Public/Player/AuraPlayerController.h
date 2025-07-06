@@ -31,8 +31,8 @@ private:
 	TObjectPtr<UInputAction>MoveAction;
 	void CursorTrace();
 	void Move(const FInputActionValue&InputActionValue);
-	IEnemyInterface*LastActor;
-	IEnemyInterface*CurrentActor;
+	TObjectPtr<IEnemyInterface> LastActor;
+	TObjectPtr<IEnemyInterface> CurrentActor;
 };
 
 

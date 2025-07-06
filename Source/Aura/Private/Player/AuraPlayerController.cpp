@@ -16,7 +16,7 @@ void AAuraPlayerController::BeginPlay()
 	Super::BeginPlay();
 	check(AuraContext);//检测是否为野指针，是的话游戏崩溃
 	UEnhancedInputLocalPlayerSubsystem*Subsystem=ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	check(Subsystem);
+	if (!Subsystem)return;
 	Subsystem->AddMappingContext(AuraContext,0);//添加映射，设置此映射优先级为0
 	bShowMouseCursor=true;
 	DefaultMouseCursor=EMouseCursor::Default;//设置鼠标指针样式为默认值
