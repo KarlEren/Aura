@@ -12,47 +12,28 @@
 AAuraEffectActor::AAuraEffectActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
-	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
-	SetRootComponent(StaticMeshComponent);
-	SphereComponent->SetupAttachment(StaticMeshComponent);
+	SetRootComponent(CreateDefaultSubobject<USceneComponent>("Root"));
 }
-
-void AAuraEffectActor::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
-{
-	if (IAbilitySystemInterface *IAC = Cast<IAbilitySystemInterface>(OtherActor))
-	{
-		if (UAuraAbilitySystemComponent *AuraAbilityComp = Cast<UAuraAbilitySystemComponent>(IAC->GetAbilitySystemComponent()))
-		{
-			if (const UAuraAttributeSet *AuraAttributeSet = Cast<UAuraAttributeSet>(AuraAbilityComp->GetAttributeSet(UAuraAttributeSet::StaticClass())))
-			{
-				UAuraAttributeSet *NonConstAuraAttributeSet = const_cast<UAuraAttributeSet *>(AuraAttributeSet);
-				switch (AuraEffectType)
-				{
-				case EAuraEffectType::Health:
-					NonConstAuraAttributeSet->SetHealth(NonConstAuraAttributeSet->GetHealth()-40.f);
-					break;
-				case EAuraEffectType::Mana:
-					NonConstAuraAttributeSet->SetMana(NonConstAuraAttributeSet->GetMana()-40.f);
-					break;
-				}
-				Destroy();
-			}
-		}
-	}
-}
-
-void AAuraEffectActor::EndOverlap(UPrimitiveComponent* OverlappedComponent,AActor* OtherActor,UPrimitiveComponent* OtherComp,int32 OtherBodyIndex)
-{
-	
-}
-
 
 void AAuraEffectActor::BeginPlay()
 {
 	Super::BeginPlay();
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this,&AAuraEffectActor::OnOverlap);
-	SphereComponent->OnComponentEndOverlap.AddDynamic(this,&AAuraEffectActor::EndOverlap);
+}
+
+void AAuraEffectActor::ApplyEffect(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass)
+{
+	checkf(GameplayEffectClass,TEXT("buff no set"))
+	if (IAbilitySystemInterface *IAC = Cast<IAbilitySystemInterface>(TargetActor))
+	{
+		if (UAbilitySystemComponent *AbilitySystem = IAC->GetAbilitySystemComponent())
+		{
+			FGameplayEffectContextHandle GameplayEffectContext =AbilitySystem->MakeEffectContext();
+			GameplayEffectContext.AddSourceObject(this);
+			FGameplayEffectSpecHandle GameplayEffectSpec = AbilitySystem->MakeOutgoingSpec(GameplayEffectClass,1.f,GameplayEffectContext);
+			AbilitySystem->ApplyGameplayEffectSpecToSelf(*GameplayEffectSpec.Data.Get());
+			Destroy();
+		}
+	}
 }
 
 

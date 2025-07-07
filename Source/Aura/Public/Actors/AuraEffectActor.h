@@ -7,6 +7,8 @@
 #include "AuraEffectActor.generated.h"
 
 
+class UGameplayEffect;
+
 UENUM(BlueprintType)
 enum class EAuraEffectType : uint8
 {
@@ -26,25 +28,13 @@ public:
 	// Sets default values for this actor's properties
 	AAuraEffectActor();
 
-	UFUNCTION()
-	virtual void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
-
-	UFUNCTION()
-	virtual void EndOverlap(UPrimitiveComponent* OverlappedComponent,AActor* OtherActor,UPrimitiveComponent* OtherComp,int32 OtherBodyIndex);
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	EAuraEffectType AuraEffectType;
-	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-private:
+	UFUNCTION(BlueprintCallable)
+	void ApplyEffect(AActor *TargetActor,TSubclassOf<UGameplayEffect>GameplayEffectClass);
 	
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USphereComponent> SphereComponent;
-
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
-
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 };
