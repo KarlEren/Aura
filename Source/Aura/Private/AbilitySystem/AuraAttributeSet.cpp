@@ -3,7 +3,10 @@
 
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystemInterface.h"
 #include "Net/UnrealNetwork.h"
+#include "GameplayEffectExtension.h"
+#include "GameFramework/Character.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
@@ -41,3 +44,76 @@ void UAuraAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) 
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet,MaxMana,OldMaxMana)
 }
+
+void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	Super::PreAttributeChange(Attribute, NewValue);
+	if (Attribute == GetHealthAttribute())
+	{
+		NewValue = FMath::Clamp<float>(NewValue, 0.0f, GetMaxHealth());
+	}
+	if (Attribute == GetManaAttribute())
+	{
+		NewValue = FMath::Clamp<float>(NewValue, 0.0f, GetMaxMana());
+	}
+}
+
+void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+	FAuraEffectProps AuraEffectProps;
+	UpdateAuraEffectProps(Data, AuraEffectProps);
+}
+
+void UAuraAttributeSet::UpdateAuraEffectProps(const struct FGameplayEffectModCallbackData& Data,
+	FAuraEffectProps& OutEffectProps)const
+{
+	OutEffectProps.EffectContextHandle = Data.EffectSpec.GetEffectContext();
+	OutEffectProps.SourceASC = OutEffectProps.EffectContextHandle.GetInstigatorAbilitySystemComponent();
+	if (!OutEffectProps.SourceASC)
+	{
+		return;
+	}
+	if (!OutEffectProps.SourceASC->AbilityActorInfo)
+	{
+		return;
+	}
+	if (!OutEffectProps.SourceASC->AbilityActorInfo->AvatarActor.IsValid())
+	{
+		return;
+	}
+	OutEffectProps.SourceAvatarActor = OutEffectProps.SourceASC->AbilityActorInfo->AvatarActor.Get();
+	OutEffectProps.SourceController = OutEffectProps.SourceASC->AbilityActorInfo->PlayerController.Get();
+	if (!OutEffectProps.SourceController && OutEffectProps.SourceAvatarActor)
+	{
+		if (APawn *SourcePawn = Cast<APawn>(OutEffectProps.SourceAvatarActor))
+		{
+			OutEffectProps.SourceController = SourcePawn->GetController();
+		}
+	}
+	if (OutEffectProps.SourceController)
+	{
+		OutEffectProps.SourceCharacter =  OutEffectProps.SourceController->GetCharacter();
+	}
+
+	if (Data.Target.AbilityActorInfo.IsValid() && Data.Target.AbilityActorInfo->AvatarActor.IsValid())
+	{
+		OutEffectProps.TargetAvatarActor = Data.Target.AbilityActorInfo->AvatarActor.Get();
+		OutEffectProps.TargetController = Data.Target.AbilityActorInfo->PlayerController.Get();
+		OutEffectProps.TargetCharacter = Cast<ACharacter>(OutEffectProps.TargetAvatarActor);
+		IAbilitySystemInterface *IAC = Cast<IAbilitySystemInterface>(OutEffectProps.TargetAvatarActor);
+		if (!IAC)
+		{
+			return;
+		}
+		UAbilitySystemComponent *AbilitySystem = IAC->GetAbilitySystemComponent();
+		if (!AbilitySystem)
+		{
+			return;
+		}
+		OutEffectProps.TargetASC = AbilitySystem;
+	}
+}
+
+
+
