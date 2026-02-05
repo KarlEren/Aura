@@ -3,6 +3,7 @@
 
 #include "UI/WidgetController/AuraOverlayWidgetController.h"
 
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 
 void UAuraOverlayWidgetController::BoardcastInitValues()
@@ -32,6 +33,23 @@ void UAuraOverlayWidgetController::BindValueChangeDelegates()
 			AddUObject(this,&UAuraOverlayWidgetController::HandleManaChanged);
 			AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxManaAttribute()).
 			AddUObject(this,&UAuraOverlayWidgetController::HandleMaxManaChanged);
+			Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->OnAuraEffectTagDelegate.AddLambda(
+				[this](const FGameplayTagContainer& GameplayTagContainer)
+				{
+					for (const FGameplayTag& GameplayTag : GameplayTagContainer)
+					{
+						FGameplayTag MatchTag = FGameplayTag::RequestGameplayTag(FName("Message"));
+						if (GameplayTag.MatchesTag(MatchTag))
+						{
+							FAuraWidgetRow *Row = GetTableRowByTag<FAuraWidgetRow>(WidgetDataTable,GameplayTag);
+							if (Row)
+							{
+								OnMessageTag.Broadcast(*Row);
+							}
+						}
+					}	
+				}
+			);
 		}
 	}
 }
