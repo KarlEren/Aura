@@ -59,13 +59,6 @@ public:
 
 	UPROPERTY(BlueprintAssignable,BlueprintCallable)
 	FOnMessageTagDelegate OnMessageTag;
-	
-private:
-
-	void HandleHealthChanged(const FOnAttributeChangeData& Data)const;
-	void HandleMaxHealthChanged(const FOnAttributeChangeData& Data)const;
-	void HandleManaChanged(const FOnAttributeChangeData& Data)const;
-	void HandleMaxManaChanged(const FOnAttributeChangeData& Data)const;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

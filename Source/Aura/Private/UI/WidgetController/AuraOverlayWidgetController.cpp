@@ -25,26 +25,58 @@ void UAuraOverlayWidgetController::BindValueChangeDelegates()
 	{
 		if (AbilitySystemComponent)
 		{
-			AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetHealthAttribute()).
-			AddUObject(this,&UAuraOverlayWidgetController::HandleHealthChanged);
-			AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxHealthAttribute()).
-			AddUObject(this,&UAuraOverlayWidgetController::HandleMaxHealthChanged);
-			AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetManaAttribute()).
-			AddUObject(this,&UAuraOverlayWidgetController::HandleManaChanged);
-			AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxManaAttribute()).
-			AddUObject(this,&UAuraOverlayWidgetController::HandleMaxManaChanged);
-			Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->OnAuraEffectTagDelegate.AddLambda(
-				[this](const FGameplayTagContainer& GameplayTagContainer)
+			TWeakObjectPtr WeakThis = this;
+			AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetHealthAttribute()).AddLambda(
+				[WeakThis](const FOnAttributeChangeData& Data)
 				{
-					for (const FGameplayTag& GameplayTag : GameplayTagContainer)
+					if (auto ThisController = Cast<UAuraOverlayWidgetController>(WeakThis))
 					{
-						FGameplayTag MatchTag = FGameplayTag::RequestGameplayTag(FName("Message"));
-						if (GameplayTag.MatchesTag(MatchTag))
+						ThisController->OnHealthChanged.Broadcast(Data.NewValue);
+					}
+				}
+			);
+			AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxHealthAttribute()).AddLambda(
+			[WeakThis](const FOnAttributeChangeData& Data)
+				{
+					if (auto ThisController = Cast<UAuraOverlayWidgetController>(WeakThis))
+					{
+						ThisController->OnMaxHealthChanged.Broadcast(Data.NewValue);
+					}
+				}
+			);
+			AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetManaAttribute()).AddLambda(
+			[WeakThis](const FOnAttributeChangeData& Data)
+				{
+					if (auto ThisController = Cast<UAuraOverlayWidgetController>(WeakThis))
+					{
+						ThisController->OnManaChanged.Broadcast(Data.NewValue);
+					}
+				}
+			);
+			AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxManaAttribute()).AddLambda(
+			[WeakThis](const FOnAttributeChangeData& Data)
+				{	
+					if (auto ThisController = Cast<UAuraOverlayWidgetController>(WeakThis))
+					{
+						ThisController->OnMaxManaChanged.Broadcast(Data.NewValue);
+					}
+				}
+			);
+			Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->OnAuraEffectTagDelegate.AddLambda(
+				[WeakThis](const FGameplayTagContainer& GameplayTagContainer)
+				{
+					if (auto ThisController = Cast<UAuraOverlayWidgetController>(WeakThis))
+					{
+						for (const FGameplayTag& GameplayTag : GameplayTagContainer)
 						{
-							FAuraWidgetRow *Row = GetTableRowByTag<FAuraWidgetRow>(WidgetDataTable,GameplayTag);
-							if (Row)
+							FGameplayTag MatchTag = FGameplayTag::RequestGameplayTag(FName("Message"));
+							if (GameplayTag.MatchesTag(MatchTag))
 							{
-								OnMessageTag.Broadcast(*Row);
+								FAuraWidgetRow *Row = ThisController->GetTableRowByTag<FAuraWidgetRow>(ThisController->WidgetDataTable,GameplayTag);
+								if (Row)
+								{
+									ThisController->OnMessageTag.Broadcast(*Row);
+								}
 							}
 						}
 					}	
@@ -54,22 +86,4 @@ void UAuraOverlayWidgetController::BindValueChangeDelegates()
 	}
 }
 
-void UAuraOverlayWidgetController::HandleHealthChanged(const FOnAttributeChangeData& Data) const
-{
-	OnHealthChanged.Broadcast(Data.NewValue);
-}
 
-void UAuraOverlayWidgetController::HandleMaxHealthChanged(const FOnAttributeChangeData& Data) const
-{
-	OnMaxHealthChanged.Broadcast(Data.NewValue);
-}
-
-void UAuraOverlayWidgetController::HandleManaChanged(const FOnAttributeChangeData& Data) const
-{
-	OnManaChanged.Broadcast(Data.NewValue);
-}
-
-void UAuraOverlayWidgetController::HandleMaxManaChanged(const FOnAttributeChangeData& Data) const
-{
-	OnMaxManaChanged.Broadcast(Data.NewValue);
-}
