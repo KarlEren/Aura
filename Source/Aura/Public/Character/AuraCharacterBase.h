@@ -25,6 +25,8 @@ public:
 	UAttributeSet* GetAttributeSet()const{return AttributeSet;}
 
 	virtual void InitAbilityActorInfo();
+
+	virtual void InitPrimaryAttributes();
 	
 protected:
 
@@ -40,4 +42,9 @@ protected:
 	TObjectPtr<UAttributeSet>AttributeSet;
 
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	TSubclassOf<UGameplayEffect> PrimaryAttributes;
+
+
+	
 };
