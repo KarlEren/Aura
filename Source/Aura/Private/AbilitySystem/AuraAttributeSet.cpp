@@ -48,7 +48,7 @@ void UAuraAttributeSet::OnRep_Resilience(const FGameplayAttributeData& OldResili
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet,Resilience,OldResilience)
 }
 
-void UAuraAttributeSet::OnRep_vigor(const FGameplayAttributeData& OldVigor) const
+void UAuraAttributeSet::OnRep_Vigor(const FGameplayAttributeData& OldVigor) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UAuraAttributeSet,Vigor,OldVigor)
 }

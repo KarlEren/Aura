@@ -147,7 +147,7 @@ public:
 	void OnRep_Resilience(const FGameplayAttributeData& OldResilience)const;
 
 	UFUNCTION()
-	void OnRep_vigor(const FGameplayAttributeData& OldVigor)const;
+	void OnRep_Vigor(const FGameplayAttributeData& OldVigor)const;
 	
 	
 	UPROPERTY(BlueprintReadOnly,ReplicatedUsing=OnRep_Health)

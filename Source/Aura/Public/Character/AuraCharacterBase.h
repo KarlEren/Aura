@@ -6,13 +6,14 @@
 #include "AbilitySystemInterface.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "GameFramework/Character.h"
+#include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
 class UAbilitySystemComponent;
 class UAttributeSet;
 
 UCLASS(Abstract)
-class AURA_API AAuraCharacterBase : public ACharacter,public IAbilitySystemInterface
+class AURA_API AAuraCharacterBase : public ACharacter,public IAbilitySystemInterface,public ICombatInterface
 {
 	GENERATED_BODY()
 
@@ -26,7 +27,11 @@ public:
 
 	virtual void InitAbilityActorInfo();
 
-	virtual void InitPrimaryAttributes();
+
+
+	virtual void InitDefaultAttributes(TSubclassOf<UGameplayEffect>& GameplayEffect,float Level);
+
+	virtual void ActivateAbilities();
 	
 protected:
 
@@ -45,6 +50,11 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TSubclassOf<UGameplayEffect> PrimaryAttributes;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	TSubclassOf<UGameplayEffect> SecondaryAttributes;
 
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	TSubclassOf<UGameplayEffect> VitalAttributes;
 	
 };

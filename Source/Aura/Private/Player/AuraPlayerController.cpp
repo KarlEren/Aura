@@ -47,12 +47,11 @@ void AAuraPlayerController::CursorTrace()
 	GetHitResultUnderCursor(ECC_Visibility,false,CursorHit);//获取光标下碰撞检测结果
 	if (!CursorHit.bBlockingHit)return;
 	LastActor=CurrentActor;
-	CurrentActor=Cast<IEnemyInterface>(CursorHit.GetActor());
+	CurrentActor=CursorHit.GetActor();
 	//需要检查上一个悬停的actor和现在悬停的actor的区别
 	if (LastActor==nullptr)
 	{
 		if (CurrentActor!=nullptr)CurrentActor->HighLightActor();
-		else{}
 	}
 	else
 	{
@@ -64,7 +63,6 @@ void AAuraPlayerController::CursorTrace()
 				LastActor->UnHightLightActor();
 				CurrentActor->HighLightActor();
 			}
-			else{}
 		}
 	}
 	

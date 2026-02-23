@@ -40,3 +40,8 @@ void AAuraEnemy::BeginPlay()
 	Super::BeginPlay();
 	AbilitySystemComponent->InitAbilityActorInfo(this,this);
 }
+
+int32 AAuraEnemy::GetPlayerLevel()
+{
+	return Level;
+}
